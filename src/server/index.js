@@ -30,8 +30,8 @@ let PORT = parseInt(process.env.PORT) || 5000;
 
 // Validate port range
 if (PORT < 1024 || PORT > 65535) {
-  console.warn(`⚠️ Invalid port ${PORT}, using default ${process.env.NODE_ENV === 'production' ? 5000 : 3001}`);
-  PORT = process.env.NODE_ENV === 'production' ? 5000 : 3001;
+  console.warn(`⚠️ Invalid port ${PORT}, using default 5000`);
+  PORT = 5000;
 }
 
 console.log(`🔧 Initial port configuration: ${PORT} (type: ${typeof PORT})`);

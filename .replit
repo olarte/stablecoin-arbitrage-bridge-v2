@@ -16,7 +16,7 @@ ignorePorts = false
 build = ["sh", "-c", "cd stablearb-frontend && npm install && npm run build"]
 
 [workflows]
-runButton = "Start Server"
+runButton = "Start Full Stack"
 
 [[workflows.workflow]]
 name = "Start Server"
@@ -39,6 +39,15 @@ args = "cd stablearb-frontend && npm install && npm run build"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "cd src/server && NODE_ENV=production node index.js"
+
+[[workflows.workflow]]
+name = "Start Full Stack"
+author = 44771434
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd src/server && node index.js"
 
 [[ports]]
 localPort = 3001
