@@ -1,107 +1,43 @@
-
-export const CHAINS = {
+export const CHAIN_CONFIG = {
   ethereum: {
-    id: 1,
-    name: 'Ethereum',
-    rpcUrl: process.env.ETHEREUM_RPC_URL,
-    currency: 'ETH',
-    blockExplorer: 'https://etherscan.io',
-    contracts: {
-      usdc: '0xA0b86a33E6441d05b0c45AadfF5E36C48D1F6e',
-      usdt: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
-      dai: '0x6B175474E89094C44Da98b954EedeAC495271d0F'
+    rpc: process.env.SEPOLIA_RPC || 'https://sepolia.infura.io/v3/YOUR_KEY',
+    chainId: 11155111, // Ethereum Sepolia
+    tokens: {
+      USDC: '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238',
+      USDT: '0x7169D38820dfd117C3FA1f22a697dBA58d90BA06',
+      WETH: '0xfFf9976782d46CC05630D1f6eBAb18b2324d6B14',
+      DAI: '0x3e622317f8C93f7328350cF0B56d9eD4C620C5d6'
     },
-    gasLimit: {
-      transfer: 21000,
-      swap: 150000,
-      bridge: 200000
+    uniswap: {
+      factory: '0x0227628f3F023bb0B980b67D528571c95c6DaC1c',
+      quoter: '0xEd1f6473345F45b75F8179591dd5bA1888cf2FB3',
+      router: '0x3bFA4769FB09eefC5a80d6E87c3B9C650f7Ae48E'
     },
-    confirmations: 12
+    fusion: {
+      relayerUrl: 'https://fusion.1inch.io/relayer/v1.0/11155111',
+      apiUrl: 'https://api.1inch.dev/fusion/v1.0/11155111'
+    }
   },
-  
   sui: {
-    id: 'sui',
-    name: 'Sui',
-    rpcUrl: process.env.SUI_RPC_URL,
-    currency: 'SUI',
-    blockExplorer: 'https://explorer.sui.io',
-    contracts: {
-      usdc: '0x5d4b302506645c37ff133b98c4b50a5ae14841659738d6d733d59d0d217a93bf::coin::COIN',
-      usdt: '0xc060006111016b8a020ad5b33834984a437aaa7d3c74c18e09a95d48aceab08c::coin::COIN',
-      dai: '0xa198f3be41cda8c07b3bf3fee02263526e535d682bbbd0d974cf8b5c04c456ac::coin::COIN'
+    rpc: process.env.SUI_RPC || 'https://fullnode.testnet.sui.io',
+    chainId: 'sui:testnet',
+    tokens: {
+      USDC: '0x5d4b302506645c37ff133b98c4b50a5ae14841659738d6d733d59d0d217a93bf::coin::COIN',
+      USDY: '0xa3d3b6c6d5e9c8f4b7d8e5f2a1c3e9d8f5b2c9e8d5f2a1c3e8d5f2a1c3e9d8f5::usdy::USDY',
+      SUI: '0x2::sui::SUI'
     },
-    gasLimit: {
-      transfer: 1000000,
-      swap: 2000000,
-      bridge: 3000000
-    },
-    confirmations: 1
-  }
-};
-
-export const SUPPORTED_TOKENS = {
-  USDC: {
-    symbol: 'USDC',
-    decimals: 6,
-    minBridgeAmount: 10,
-    maxBridgeAmount: 100000,
-    contracts: {
-      ethereum: CHAINS.ethereum.contracts.usdc,
-      sui: CHAINS.sui.contracts.usdc
-    }
-  },
-  
-  USDT: {
-    symbol: 'USDT',
-    decimals: 6,
-    minBridgeAmount: 10,
-    maxBridgeAmount: 100000,
-    contracts: {
-      ethereum: CHAINS.ethereum.contracts.usdt,
-      sui: CHAINS.sui.contracts.usdt
-    }
-  },
-  
-  DAI: {
-    symbol: 'DAI',
-    decimals: 18,
-    minBridgeAmount: 10,
-    maxBridgeAmount: 100000,
-    contracts: {
-      ethereum: CHAINS.ethereum.contracts.dai,
-      sui: CHAINS.sui.contracts.dai
+    cetus: {
+      packageId: '0x1eabed72c53feb3805120a081dc15963c204dc8d091542592abaf7a35689b2fb',
+      globalConfig: '0xdaa46292632c3c4d8f31f23ea0f9b36a28ff3677e9684980e4438403a67a3d8f'
     }
   }
 };
 
-export const BRIDGE_CONFIG = {
-  fees: {
-    ethereum: 0.001, // 0.1%
-    sui: 0.0005      // 0.05%
-  },
-  
-  minProfitThreshold: parseFloat(process.env.MIN_PROFIT_THRESHOLD) || 0.01,
-  maxSlippage: parseFloat(process.env.MAX_SLIPPAGE) || 0.005,
-  gasPriceMultiplier: parseFloat(process.env.GAS_PRICE_MULTIPLIER) || 1.2,
-  
-  timeouts: {
-    ethereum: 300000, // 5 minutes
-    sui: 60000        // 1 minute
+export const CHAINLINK_ORACLES = {
+  ethereum: {
+    USDC_USD: '0xA2F78ab2355fe2f984D808B5CeE7FD0A93D5270E',
+    USDT_USD: '0x3f3f5dF88dC9F13eac63DF89EC16ef6e7E25DdE7',
+    ETH_USD: '0x694AA1769357215DE4FAC081bf1f309aDC325306',
+    decimals: 8
   }
 };
-
-export function getChainById(chainId) {
-  return Object.values(CHAINS).find(chain => chain.id === chainId);
-}
-
-export function getTokenBySymbol(symbol) {
-  return SUPPORTED_TOKENS[symbol.toUpperCase()];
-}
-
-export function getSupportedChains() {
-  return Object.keys(CHAINS);
-}
-
-export function getSupportedTokens() {
-  return Object.keys(SUPPORTED_TOKENS);
-}
