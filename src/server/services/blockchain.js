@@ -44,28 +44,38 @@ export async function initializeProviders() {
     // Multiple RPC endpoints for redundancy
     const ethereumRPCs = [
       process.env.SEPOLIA_RPC,
+      process.env.ETHEREUM_RPC,
       'https://sepolia.gateway.tenderly.co',
       'https://rpc.sepolia.org',
       'https://ethereum-sepolia.publicnode.com'
-    ].filter(Boolean);
+    ].filter(url => url && url.startsWith('http'));
 
     let ethProvider = null;
 
     // Try each RPC until one works
     for (const rpc of ethereumRPCs) {
       try {
+        console.log(`🔍 Trying RPC: ${rpc}`);
         const provider = new ethers.JsonRpcProvider(rpc);
         await provider.getNetwork(); // Test connection
         ethProvider = provider;
         console.log(`✅ Ethereum connected via ${new URL(rpc).hostname}`);
         break;
       } catch (error) {
-        console.log(`⚠️ ${new URL(rpc).hostname} unavailable, trying next...`);
+        console.log(`⚠️ Failed to connect to ${rpc}: ${error.message}`);
       }
     }
 
     if (!ethProvider) {
-      throw new Error('No Ethereum RPC endpoints available');
+      console.log('⚠️ No Ethereum RPC endpoints available, using fallback...');
+      // Use a public RPC as absolute fallback
+      try {
+        ethProvider = new ethers.JsonRpcProvider('https://rpc.sepolia.org');
+        await ethProvider.getNetwork();
+        console.log('✅ Connected using fallback RPC');
+      } catch (error) {
+        throw new Error(`All Ethereum RPC endpoints failed. Please check your SEPOLIA_RPC in Secrets. Error: ${error.message}`);
+      }
     }
 
     // Sui connection (your current working code)
