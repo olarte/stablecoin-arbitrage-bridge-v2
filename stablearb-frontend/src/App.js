@@ -22,18 +22,21 @@ const getApiBase = () => {
 
   // For Replit environment
   if (window.location.hostname.includes("replit.dev")) {
-    // Your frontend is on port 4200, backend should be on 3001
-    const baseUrl =
-      window.location.protocol +
-      "//" +
-      window.location.hostname.replace(":4200", ":3001");
-    console.log("Replit backend URL:", baseUrl + "/api");
-    return baseUrl + "/api";
+    // Extract the base URL and add the backend port
+    const protocol = window.location.protocol;
+    const hostname = window.location.hostname;
+    
+    // Remove any existing port from hostname and add backend port
+    const baseHostname = hostname.split(':')[0];
+    const backendUrl = `${protocol}//${baseHostname}:3003`;
+    
+    console.log("Replit backend URL:", backendUrl + "/api");
+    return backendUrl + "/api";
   }
 
   // For local development
   if (window.location.hostname === "localhost") {
-    return "http://localhost:3001/api";
+    return "http://localhost:3003/api";
   }
 
   // Fallback
@@ -59,8 +62,16 @@ const StableArbBridge = () => {
   // Fetch wallet status
   const fetchWalletStatus = async () => {
     try {
+      console.log("Fetching wallet status from:", `${API_BASE}/swap/wallet-status`);
       const response = await fetch(`${API_BASE}/swap/wallet-status`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
       const data = await response.json();
+      console.log("Wallet status response:", data);
+      
       if (data.success) {
         setWalletStatus(data.data);
         setTradingEnabled(data.data.trading.enabled);
@@ -68,6 +79,7 @@ const StableArbBridge = () => {
         setError(data.error || "Failed to fetch wallet status");
       }
     } catch (err) {
+      console.error("Wallet status error:", err);
       setError("Failed to fetch wallet status: " + err.message);
     }
   };
@@ -75,10 +87,18 @@ const StableArbBridge = () => {
   // Fetch arbitrage opportunities
   const fetchOpportunities = async () => {
     try {
+      console.log("Fetching opportunities from:", `${API_BASE}/swap/scan-opportunities`);
       const response = await fetch(
         `${API_BASE}/swap/scan-opportunities?includeCelo=true&includeTriangular=true`,
       );
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
       const data = await response.json();
+      console.log("Opportunities response:", data);
+      
       if (data.success) {
         setOpportunities(data.data.opportunities || []);
         setError(null); // Clear any previous errors
@@ -86,6 +106,7 @@ const StableArbBridge = () => {
         setError(data.error || "Failed to fetch opportunities");
       }
     } catch (err) {
+      console.error("Opportunities fetch error:", err);
       setError("Failed to fetch opportunities: " + err.message);
     }
   };
