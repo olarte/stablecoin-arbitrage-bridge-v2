@@ -24,53 +24,14 @@ dotenv.config();
 // PORT CONFIGURATION (FIXED)
 // ================================
 
-// Fix: Ensure PORT is always a number and within valid range
-// Use port 5000 for both development and production (Replit recommended port)
-let PORT = parseInt(process.env.PORT) || 5000;
+// Fix: Force port 5000 for Replit deployment
+const PORT = 5000;
 
-// Validate port range
-if (PORT < 1024 || PORT > 65535) {
-  console.warn(`⚠️ Invalid port ${PORT}, using default 5000`);
-  PORT = 5000;
-}
+console.log(`🔧 Forcing port: ${PORT} for Replit deployment`);
 
-console.log(`🔧 Initial port configuration: ${PORT} (type: ${typeof PORT})`);
-
-// Fixed port finder function
-async function findAvailablePort(startPort) {
-  return new Promise((resolve, reject) => {
-    // Ensure startPort is a number and within valid range
-    const port = parseInt(startPort);
-    if (isNaN(port) || port < 1024 || port > 65535) {
-      console.error(`❌ Invalid port: ${startPort}`);
-      resolve(3001); // Fallback to default
-      return;
-    }
-
-    const server = createServer();
-
-    server.listen(port, () => {
-      const actualPort = server.address().port;
-      server.close(() => resolve(actualPort));
-    });
-
-    server.on('error', (err) => {
-      if (err.code === 'EADDRINUSE') {
-        console.log(`⚠️ Port ${port} in use, trying ${port + 1}...`);
-
-        // Prevent infinite recursion by limiting port range
-        if (port < 65500) {
-          resolve(findAvailablePort(port + 1));
-        } else {
-          console.error('❌ No available ports found');
-          resolve(3001); // Fallback
-        }
-      } else {
-        console.error(`❌ Port error: ${err.message}`);
-        resolve(3001); // Fallback to default
-      }
-    });
-  });
+// Simplified port function - just use 5000
+async function getPort() {
+  return PORT;
 }
 
 const app = express();
@@ -537,12 +498,12 @@ async function startServer() {
       console.warn('⚠️ Trading features will be limited');
     }
 
-    // Find available port
-    console.log('🔍 Finding available port...');
-    const finalPort = await findAvailablePort(PORT);
+    // Use fixed port 5000
+    console.log('🔍 Using fixed port for Replit...');
+    const finalPort = await getPort();
     console.log(`✅ Using port: ${finalPort}`);
 
-    // Start the server - bind to 0.0.0.0 for production accessibility
+    // Start the server - bind to 0.0.0.0 for Replit accessibility
     const server = app.listen(finalPort, '0.0.0.0', () => {
       console.log('\n✅ StableArb Bridge v2 Enhanced - READY FOR TRADING');
       console.log('===================================================');
