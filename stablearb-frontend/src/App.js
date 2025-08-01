@@ -34,15 +34,26 @@ const getApiBase = () => {
   const currentUrl = window.location.href;
   console.log("Current frontend URL:", currentUrl);
 
+  // For Replit environment
+  if (window.location.hostname.includes("replit.dev")) {
+    // Extract the base URL and use port 5000 for backend
+    const protocol = window.location.protocol;
+    const hostname = window.location.hostname;
+    const backendUrl = `${protocol}//${hostname}:5000`;
+    
+    console.log("Replit backend URL:", backendUrl + "/api");
+    return backendUrl + "/api";
+  }
+
   // For production deployment (served from same origin)
-  if (process.env.NODE_ENV === 'production' || window.location.hostname.includes("replit.dev")) {
+  if (process.env.NODE_ENV === 'production') {
     console.log("Production mode - using same origin API");
     return "/api";
   }
 
   // For local development
   if (window.location.hostname === "localhost") {
-    return "http://localhost:3001/api";
+    return "http://localhost:5000/api";
   }
 
   // Fallback

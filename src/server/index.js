@@ -25,8 +25,8 @@ dotenv.config();
 // ================================
 
 // Fix: Ensure PORT is always a number and within valid range
-// Use port 5000 for production (Replit recommended port)
-let PORT = parseInt(process.env.PORT) || (process.env.NODE_ENV === 'production' ? 5000 : 3001);
+// Use port 5000 for both development and production (Replit recommended port)
+let PORT = parseInt(process.env.PORT) || 5000;
 
 // Validate port range
 if (PORT < 1024 || PORT > 65535) {
