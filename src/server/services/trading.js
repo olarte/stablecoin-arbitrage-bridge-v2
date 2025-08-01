@@ -1,5 +1,5 @@
 import { executeEthereumSwap, executeSuiSwap, getCurrentDEXPrices } from './dex.js';
-import { executeCeloStablecoinSwap, getCeloPrices } from './celo.js';
+import { executeCeloStablecoinSwap, getCeloPrices } from './celo-dex.js';
 import { getWalletBalances } from './wallets.js';
 
 const SAFETY_LIMITS = {

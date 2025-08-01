@@ -1,7 +1,7 @@
 import express from 'express';
 import { randomBytes, createHash } from 'crypto';
 import { swapStates, walletConnections, checkCrossChainSpread } from '../services/blockchain.js';
-import { executeRealArbitrageTrade, executeEnhancedCrossChainArbitrage, scanForArbitrageOpportunities } from '../services/arbitrage.js';
+import { executeRealArbitrageTrade, scanForArbitrageOpportunities } from '../services/trading.js';
 import { getWalletBalances, getGasPrices } from '../services/wallets.js';
 
 const router = express.Router();
