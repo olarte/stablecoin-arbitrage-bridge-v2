@@ -25,12 +25,13 @@ dotenv.config();
 // ================================
 
 // Fix: Ensure PORT is always a number and within valid range
-let PORT = parseInt(process.env.PORT) || 3001;
+// Use port 5000 for production (Replit recommended port)
+let PORT = parseInt(process.env.PORT) || (process.env.NODE_ENV === 'production' ? 5000 : 3001);
 
 // Validate port range
 if (PORT < 1024 || PORT > 65535) {
-  console.warn(`⚠️ Invalid port ${PORT}, using default 3001`);
-  PORT = 3001;
+  console.warn(`⚠️ Invalid port ${PORT}, using default ${process.env.NODE_ENV === 'production' ? 5000 : 3001}`);
+  PORT = process.env.NODE_ENV === 'production' ? 5000 : 3001;
 }
 
 console.log(`🔧 Initial port configuration: ${PORT} (type: ${typeof PORT})`);
@@ -192,7 +193,7 @@ app.use((req, res, next) => {
 
 // Serve React build files in production
 if (process.env.NODE_ENV === 'production') {
-  const buildPath = path.join(__dirname, '../frontend/build');
+  const buildPath = path.join(__dirname, '../../stablearb-frontend/build');
   app.use(express.static(buildPath));
 
   // Serve React app for all non-API routes
@@ -541,8 +542,8 @@ async function startServer() {
     const finalPort = await findAvailablePort(PORT);
     console.log(`✅ Using port: ${finalPort}`);
 
-    // Start the server
-    const server = app.listen(finalPort, () => {
+    // Start the server - bind to 0.0.0.0 for production accessibility
+    const server = app.listen(finalPort, '0.0.0.0', () => {
       console.log('\n✅ StableArb Bridge v2 Enhanced - READY FOR TRADING');
       console.log('===================================================');
       console.log(`🌐 Server URL: http://localhost:${finalPort}`);
