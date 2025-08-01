@@ -1,6 +1,6 @@
 export const CHAIN_CONFIG = {
   ethereum: {
-    rpc: process.env.SEPOLIA_RPC || 'https://sepolia.infura.io/v3/YOUR_KEY',
+    rpc: process.env.SEPOLIA_RPC || process.env.ETHEREUM_RPC,
     chainId: 11155111, // Ethereum Sepolia
     tokens: {
       USDC: '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238',
@@ -19,7 +19,7 @@ export const CHAIN_CONFIG = {
     }
   },
   sui: {
-    rpc: process.env.SUI_RPC || 'https://fullnode.testnet.sui.io',
+    rpc: process.env.SUI_RPC || process.env.SUI_TESTNET_RPC || 'https://fullnode.testnet.sui.io',
     chainId: 'sui:testnet',
     tokens: {
       USDC: '0x5d4b302506645c37ff133b98c4b50a5ae14841659738d6d733d59d0d217a93bf::coin::COIN',

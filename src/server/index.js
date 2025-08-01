@@ -3,7 +3,6 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
-import dotenv from 'dotenv';
 
 // Route imports
 import swapRoutes from './routes/swaps.js';
@@ -12,8 +11,6 @@ import walletRoutes from './routes/wallet.js';
 
 // Service imports
 import { initializeProviders } from './services/blockchain.js';
-
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
