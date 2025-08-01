@@ -13,7 +13,7 @@ import walletRoutes from './routes/wallet.js';
 import { initializeProviders } from './services/blockchain.js';
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(helmet());
@@ -62,8 +62,8 @@ async function startServer() {
 
     app.listen(PORT, '0.0.0.0', () => {
       console.log(`🚀 StableArb Bridge v2 running on port ${PORT}`);
-      console.log(`📊 Health: http://localhost:${PORT}/api/health`);
-      console.log(`🧪 Test: http://localhost:${PORT}/api/test`);
+      console.log(`📊 Health: http://0.0.0.0:${PORT}/api/health`);
+      console.log(`🧪 Test: http://0.0.0.0:${PORT}/api/test`);
       console.log(`📈 Endpoints available:`);
       console.log(`   - POST /api/swap/bidirectional-real`);
       console.log(`   - GET  /api/swap/status-real/:id`);

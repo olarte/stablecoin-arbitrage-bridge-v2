@@ -16,7 +16,6 @@
     "ethers": "^6.8.1",
     "@mysten/sui.js": "^0.45.0",
     "axios": "^1.6.0",
-    "dotenv": "^16.3.1",
     "crypto": "^1.0.1"
   },
   "keywords": ["defi", "arbitrage", "cross-chain", "ethereum", "sui"],
