@@ -34,12 +34,12 @@ const getApiBase = () => {
   const currentUrl = window.location.href;
   console.log("Current frontend URL:", currentUrl);
 
-  // For Replit environment
+  // For Replit environment - connect to port 80 which maps to our server port
   if (window.location.hostname.includes("replit.dev")) {
-    // Extract the base URL and connect to port 5000 specifically
     const protocol = window.location.protocol;
     const hostname = window.location.hostname;
-    const backendUrl = `${protocol}//${hostname}:5000`;
+    // Port 5000 is mapped to external port 80, so use the base URL
+    const backendUrl = `${protocol}//${hostname}`;
     
     console.log("Replit backend URL:", backendUrl + "/api");
     return backendUrl + "/api";
