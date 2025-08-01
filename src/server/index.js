@@ -1,3 +1,4 @@
+
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -22,6 +23,7 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
+// Rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100
@@ -55,9 +57,13 @@ app.get('/api/test', (req, res) => {
 // Start server
 async function startServer() {
   try {
+    console.log('🚀 Starting StableArb Bridge v2...');
+    
+    // Initialize blockchain providers with better error handling
     await initializeProviders();
+    console.log('✅ Blockchain providers initialized successfully');
 
-    app.listen(PORT, () => {
+    app.listen(PORT, '0.0.0.0', () => {
       console.log(`🚀 StableArb Bridge v2 running on port ${PORT}`);
       console.log(`📊 Health: http://localhost:${PORT}/api/health`);
       console.log(`🧪 Test: http://localhost:${PORT}/api/test`);
@@ -69,7 +75,15 @@ async function startServer() {
       console.log(`✨ Ready for arbitrage opportunities!`);
     });
   } catch (error) {
-    console.error('❌ Server startup failed:', error);
+    console.error('❌ Server startup failed:', error.message);
+    console.error('Full error:', error);
+    
+    // Don't exit immediately, show helpful error message
+    console.log('\n🔧 Troubleshooting tips:');
+    console.log('1. Check your .env file has the required RPC URLs');
+    console.log('2. Verify network connectivity');
+    console.log('3. Check if RPC endpoints are accessible');
+    
     process.exit(1);
   }
 }

@@ -1,3 +1,4 @@
+
 import { ethers } from 'ethers';
 import { SuiClient } from '@mysten/sui.js/client';
 import { CHAIN_CONFIG } from '../config/chains.js';
@@ -6,27 +7,86 @@ export let ethProvider, suiProvider;
 export const swapStates = new Map();
 export const walletConnections = new Map();
 
+// Fallback RPC URLs
+const FALLBACK_RPCS = {
+  ethereum: [
+    'https://sepolia.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
+    'https://rpc.sepolia.org',
+    'https://sepolia.gateway.tenderly.co'
+  ],
+  sui: [
+    'https://fullnode.testnet.sui.io',
+    'https://sui-testnet.nodereal.io'
+  ]
+};
+
+async function createEthProvider() {
+  const rpcUrls = [
+    CHAIN_CONFIG.ethereum.rpc,
+    ...FALLBACK_RPCS.ethereum
+  ].filter(Boolean);
+
+  for (const rpcUrl of rpcUrls) {
+    try {
+      console.log(`🔗 Trying Ethereum RPC: ${rpcUrl.split('/')[2]}...`);
+      const provider = new ethers.JsonRpcProvider(rpcUrl);
+      
+      // Test the connection
+      await provider.getNetwork();
+      console.log(`✅ Ethereum provider connected via ${rpcUrl.split('/')[2]}`);
+      return provider;
+    } catch (error) {
+      console.log(`❌ Failed to connect to ${rpcUrl.split('/')[2]}: ${error.message}`);
+      continue;
+    }
+  }
+  
+  throw new Error('Failed to connect to any Ethereum RPC endpoint');
+}
+
+async function createSuiProvider() {
+  const rpcUrls = [
+    CHAIN_CONFIG.sui.rpc,
+    ...FALLBACK_RPCS.sui
+  ].filter(Boolean);
+
+  for (const rpcUrl of rpcUrls) {
+    try {
+      console.log(`🔗 Trying Sui RPC: ${rpcUrl.split('/')[2]}...`);
+      const provider = new SuiClient({ url: rpcUrl });
+      
+      // Test the connection
+      await provider.getChainIdentifier();
+      console.log(`✅ Sui provider connected via ${rpcUrl.split('/')[2]}`);
+      return provider;
+    } catch (error) {
+      console.log(`❌ Failed to connect to ${rpcUrl.split('/')[2]}: ${error.message}`);
+      continue;
+    }
+  }
+  
+  throw new Error('Failed to connect to any Sui RPC endpoint');
+}
+
 export async function initializeProviders() {
   try {
     console.log('🔗 Initializing blockchain providers...');
 
-    // Ethereum Sepolia provider
-    ethProvider = new ethers.JsonRpcProvider(CHAIN_CONFIG.ethereum.rpc);
+    // Initialize providers with fallback support
+    ethProvider = await createEthProvider();
+    suiProvider = await createSuiProvider();
 
-    // Sui Testnet provider
-    suiProvider = new SuiClient({ url: CHAIN_CONFIG.sui.rpc });
-
-    // Test connections
+    // Test connections and get network info
     const ethNetwork = await ethProvider.getNetwork();
     const suiChainId = await suiProvider.getChainIdentifier();
 
-    console.log(`✅ Ethereum Sepolia connected: Chain ${ethNetwork.chainId}`);
-    console.log(`✅ Sui Testnet connected: ${suiChainId}`);
+    console.log(`✅ Ethereum connected: Chain ${ethNetwork.chainId} (${ethNetwork.name})`);
+    console.log(`✅ Sui connected: ${suiChainId}`);
 
     return { ethProvider, suiProvider };
   } catch (error) {
-    console.error('❌ Provider initialization failed:', error);
-    throw error;
+    console.error('❌ Provider initialization failed:', error.message);
+    throw new Error(`Blockchain initialization failed: ${error.message}`);
   }
 }
 
