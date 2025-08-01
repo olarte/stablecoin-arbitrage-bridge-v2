@@ -36,6 +36,9 @@ async function getPort() {
 
 const app = express();
 
+// Trust proxy for Replit environment
+app.set('trust proxy', true);
+
 // Get directory name for ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -162,6 +165,29 @@ if (process.env.NODE_ENV === 'production') {
     if (!req.path.startsWith('/api')) {
       res.sendFile(path.join(buildPath, 'index.html'));
     }
+  });
+} else {
+  // Development mode - serve a simple landing page
+  app.get('/', (req, res) => {
+    res.json({
+      success: true,
+      message: 'StableArb Bridge v2 Enhanced - Backend API Server',
+      version: '2.0.0-enhanced',
+      status: 'Backend running successfully',
+      frontend: {
+        note: 'This is the backend API server',
+        reactFrontend: 'Run React frontend separately on port 3000',
+        apiEndpoints: '/api/info for full API documentation'
+      },
+      quickStart: {
+        health: '/api/health',
+        info: '/api/info',
+        test: '/api/test',
+        walletStatus: '/api/swap/wallet-status',
+        opportunities: '/api/swap/scan-opportunities'
+      },
+      timestamp: new Date().toISOString()
+    });
   });
 }
 
